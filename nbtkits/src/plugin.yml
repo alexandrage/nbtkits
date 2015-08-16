@@ -1,0 +1,6 @@
+name: kits
+main: nbtkits.kits
+version: 1.0
+commands:
+    kit:
+    kits:
