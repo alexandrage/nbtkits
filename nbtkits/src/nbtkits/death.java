@@ -24,6 +24,7 @@ public class death implements Listener {
 			e.getDrops().clear();
 		}
 		if(p.hasPermission("kits.deathexp")) {
+			e.setKeepLevel(true);
 			e.setDroppedExp(0);
 		}
 	}
