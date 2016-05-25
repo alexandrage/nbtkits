@@ -4,10 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -24,7 +22,7 @@ public class kits extends JavaPlugin {
     getLogger().info("kits Enabled!");
   }
   
-@SuppressWarnings({ "deprecation", "null" })
+  @SuppressWarnings("deprecation")
 public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 	if (cmd.getName().equalsIgnoreCase("kit") && sender instanceof Player) {
 		try {
@@ -46,19 +44,10 @@ public boolean onCommand(CommandSender sender, Command cmd, String label, String
 		        	if(args[0].equalsIgnoreCase("set") && !args[1].equalsIgnoreCase("time")) {
 							InventoryNBTSer.setKit((Player) sender, folder, args[1], 86400);
 							return true;
-		      		} else if(args[0].equalsIgnoreCase("del")) {
+		      		}
+		        	if(args[0].equalsIgnoreCase("del")) {
 							InventoryNBTSer.delKit(folder, args[1], (Player) sender);
 							return true;
-		      		} else {
-		      			Player p = Bukkit.getServer().getPlayer(args[1]);
-		      			if(p!=null) {
-		      				InventoryNBTSer.getKit(p, folder, args[0], true);
-		      				return true;
-		      			} else {
-		      				sender.sendMessage("§4Игрок не найден!");
-		      				((Player) sender).playSound(((Entity) sender).getLocation(), "random.explode", 1.0F, 2.0F);
-		      				return true;
-		      			}
 		      		}
 		       }
 		    }
