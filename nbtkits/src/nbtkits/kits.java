@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -40,8 +42,8 @@ public boolean onCommand(CommandSender sender, Command cmd, String label, String
 			       }
 			}
 			if (args.length == 2) {
-		      if(sender.hasPermission("kits.admin") && args[0].matches("^[A-Za-z0-9]{1,10}$") && args[1].matches("^[A-Za-z0-9]{1,10}$")) {
-		        	if(args[0].equalsIgnoreCase("set") && !args[1].equalsIgnoreCase("time")) {
+		      if(sender.hasPermission("kits.admin") && args[0].matches("^[A-Za-z0-9]{1,10}$") && args[1].matches("^[A-Za-z0-9_]{1,10}$")) {
+		    	    if(args[0].equalsIgnoreCase("set") && !args[1].equalsIgnoreCase("time")) {
 							InventoryNBTSer.setKit((Player) sender, folder, args[1], 86400);
 							return true;
 		      		}
@@ -49,6 +51,14 @@ public boolean onCommand(CommandSender sender, Command cmd, String label, String
 							InventoryNBTSer.delKit(folder, args[1], (Player) sender);
 							return true;
 		      		}
+		        	Player pl = Bukkit.getPlayer(args[1]);
+		        	if(pl==null) {
+		        		sender.sendMessage("§4Игрок не найден");
+		        		((Player) sender).playSound(((Entity) sender).getLocation(), "random.explode", 1.0F, 2.0F);
+		        		return true;
+		        	}
+				    InventoryNBTSer.getKit(pl, folder, args[0], true);
+				    return true;
 		       }
 		    }
 			if (args.length == 1) {
@@ -62,6 +72,19 @@ public boolean onCommand(CommandSender sender, Command cmd, String label, String
 						p.playSound((p).getLocation(), "random.explode", 1.0F, 2.0F);
 						return true;
 				  }
+			}
+			
+			if (args.length == 0) {
+				List<String> l = new ArrayList<String>();
+				for(String s : InventoryNBTSer.getLogs(folder)) {
+					if(sender.hasPermission("kits.kit."+s)) {
+						l.add(s);
+					}
+				}
+				sender.sendMessage("§6Наборы §f"+l.toString().substring(1, l.toString().length()-1).replace(",", ""));
+				Player p = (Player) sender;
+				p.playSound((p).getLocation(), "random.chestopen", 1.0F, 1.0F);
+				return true;
 			}
 		
 		
