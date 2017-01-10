@@ -39,11 +39,11 @@ public class death implements Listener {
 	
 	@EventHandler
 	public void onPlayerJoinEvent(PlayerJoinEvent e) throws IOException {
-	Player p = e.getPlayer();
-	  if(!p.hasPlayedBefore()) {
-	      if(e.getPlayer().hasPermission("kits.starter")) {
+		Player p = e.getPlayer();
+		if(!p.hasPlayedBefore()) {
+			if(e.getPlayer().hasPermission("kits.starter")) {
 				InventoryNBTSer.getKit(p, plugin.folder, "starter", true);
-	      }
-	  }
+			}
+		}
 	}
 }

@@ -6,6 +6,7 @@ import net.minecraft.server.v1_7_R4.NBTTagCompound;
 import net.minecraft.server.v1_7_R4.NBTTagList;
 
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftInventoryCustom;
 import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
@@ -26,11 +27,10 @@ import java.util.Map.Entry;
 
 public class InventoryNBTSer {	
 	
-	@SuppressWarnings("deprecation")
 	public static void getKit(Player p, File folder, String name, boolean b) throws IOException {
 		if(!new File(folder+"/kits/"+name.toLowerCase()+".kit").exists()) {
 			p.sendMessage("§4Такого набора нет!");
-			p.playSound(p.getLocation(), "random.explode", 1.0F, 2.0F);
+			p.playSound(p.getLocation(), Sound.EXPLODE, 1, 2);
 			return;
 		}
     	
@@ -47,7 +47,7 @@ public class InventoryNBTSer {
 				Time t = new Time(Long.parseLong((time))-calc);
 				if(calc<Long.parseLong((time))) {
 					p.sendMessage("§4Вы не можете получить этот набор, раньше чем через §c"+t.getFormat());
-					p.playSound(p.getLocation(), "random.break", 1.0F, 0.0F);
+					p.playSound(p.getLocation(), Sound.ANVIL_BREAK, 1, 0);
 					return;
 				}
 			}
@@ -63,12 +63,11 @@ public class InventoryNBTSer {
 			}
 		}
 		p.sendMessage("§6Получен набор §c"+name.toLowerCase());
-		p.playSound(p.getLocation(), "random.anvil_land", 1.0F, 0.0F);
+		p.playSound(p.getLocation(), Sound.ANVIL_LAND, 1, 0);
 		new File(folder+"/players/").mkdirs();
 		Files.write(Long.toString(System.currentTimeMillis()).getBytes(), new File(folder+"/players/"+name.toLowerCase()+"-"+p.getName()));
 	}
 	
-	@SuppressWarnings("deprecation")
 	public static void setKit(Player p, File folder, String name, long time) throws IOException {
 		new File(folder+"/kits").mkdirs(); 
 		String Inv = toString(p.getInventory().getContents());
@@ -76,14 +75,13 @@ public class InventoryNBTSer {
 		byte[] bytes = full.getBytes();
 		Files.write(bytes, new File(folder+"/kits/"+name.toLowerCase()+".kit"));
 		p.sendMessage("§2Набор сохранен.");
-		p.playSound(p.getLocation(), "random.anvil_break", 1.0F, 1.0F);
+		p.playSound(p.getLocation(), Sound.ANVIL_BREAK, 1, 1);
 	}
 	
-	@SuppressWarnings("deprecation")
 	public static void setTime(Player p, File folder, String name, long time) throws IOException {
 		if(!new File(folder+"/kits/"+name.toLowerCase()+".kit").exists()) {
 			p.sendMessage("§4Такого набора нет!");
-			p.playSound(p.getLocation(), "random.explode", 1.0F, 2.0F);
+			p.playSound(p.getLocation(), Sound.EXPLODE, 1, 2);
 			return;
 		}
 		byte[] bytes = Files.toByteArray(new File(folder+"/kits/"+name.toLowerCase()+".kit"));
@@ -93,7 +91,7 @@ public class InventoryNBTSer {
 		byte[] bytes2 = full2.getBytes();
 		Files.write(bytes2, new File(folder+"/kits/"+name.toLowerCase()+".kit"));
 		p.sendMessage("§2Время изменено.");
-		p.playSound(p.getLocation(), "random.anvil_break", 1.0F, 1.0F);
+		p.playSound(p.getLocation(), Sound.ANVIL_BREAK, 1, 1);
 	}
 	
     private static String toString(ItemStack[] inventory) {
@@ -134,7 +132,6 @@ public class InventoryNBTSer {
                 inventory.setItem(i, CraftItemStack.asBukkitCopy(net.minecraft.server.v1_7_R4.ItemStack.createStack(inputObject)));
             }
         }
-
         return inventory;
     }
 
@@ -147,59 +144,58 @@ public class InventoryNBTSer {
             return null;
     }
 
-	@SuppressWarnings("deprecation")
 	public static void delKit(File folder, String name, Player p) {
 		File k = new File(folder+"/kits/"+name.toLowerCase()+".kit");
 		if(k.exists()) {
 			k.delete();
 			p.sendMessage("§2Набор удален.");
-			p.playSound(p.getLocation(), "random.anvil_break", 1.0F, 1.0F);
+			p.playSound(p.getLocation(), Sound.ANVIL_BREAK, 1, 1);
 		} else {
 			p.sendMessage("§4Такого набора нет!");
-			p.playSound(p.getLocation(), "random.explode", 1.0F, 0.0F);
+			p.playSound(p.getLocation(), Sound.EXPLODE, 1, 0);
 		}
 	}
 	
-	  public static List<String> getLogs(File folder) {
-		  List<String> l = new ArrayList<String>();
-		  File Logs = new File(folder+"/kits"); 
-		  Logs.mkdirs();
-	  	  for (File file : Logs.listFiles()) {
-	  		  String kit = file.toString().substring(file.toString().lastIndexOf(File.separator)+1);
-	  		  if(kit.contains(".kit")) {
-	  			  l.add(kit.replace(".kit", ""));
-	  		  }
-	  	  }
-		return l;
-	  }
-	  
-		public static void setInv(Player p, File folder) throws IOException {
-			File folderinv = new File(folder+"/saveinv"); 
-			folderinv.mkdirs();
-			String Arm = toString(p.getInventory().getArmorContents());
-			String Inv = toString(p.getInventory().getContents());
-			String full = Arm+"-"+Inv;
-			byte[] bytes = full.getBytes();
-			Files.write(bytes, new File(folderinv+"/"+p.getName()));
-	        p.getInventory().clear();
-			ItemStack[] in = p.getInventory().getArmorContents();
-	        for (int i = 0; i < in.length; i++) {
-	            in[i] = new ItemStack(Material.AIR, 0);
-	        }
-	        p.getInventory().setArmorContents(in);  
-		}
-		
-		public static void getInv(Player p, File folder) throws IOException {
-			File folderinv = new File(folder+"/saveinv"); 
-			folderinv.mkdirs();
-			if(!new File(folderinv+"/"+p.getName()).exists()) {
-				return;
+	public static List<String> getLogs(File folder) {
+		List<String> l = new ArrayList<String>();
+		File Logs = new File(folder+"/kits"); 
+		Logs.mkdirs();
+		for (File file : Logs.listFiles()) {
+			String kit = file.toString().substring(file.toString().lastIndexOf(File.separator)+1);
+			if(kit.contains(".kit")) {
+				l.add(kit.replace(".kit", ""));
 			}
-			byte[] bytes = Files.toByteArray(new File(folderinv+"/"+p.getName()));
-			String full = new String(bytes);
-			String[] spl = full.split("-");
-			new File(folderinv+"/"+p.getName()).delete();
-			p.getInventory().setArmorContents(fromString(spl[0]).getContents());
-			p.getInventory().setContents(fromString(spl[1]).getContents());
-		}  
+		}
+		return l;
+	}
+	  
+	public static void setInv(Player p, File folder) throws IOException {
+		File folderinv = new File(folder+"/saveinv"); 
+		folderinv.mkdirs();
+		String Arm = toString(p.getInventory().getArmorContents());
+		String Inv = toString(p.getInventory().getContents());
+		String full = Arm+"-"+Inv;
+		byte[] bytes = full.getBytes();
+		Files.write(bytes, new File(folderinv+"/"+p.getName()));
+		p.getInventory().clear();
+		ItemStack[] in = p.getInventory().getArmorContents();
+		for (int i = 0; i < in.length; i++) {
+			in[i] = new ItemStack(Material.AIR, 0);
+		}
+		p.getInventory().setArmorContents(in);  
+	}
+		
+	public static void getInv(Player p, File folder) throws IOException {
+		File folderinv = new File(folder+"/saveinv"); 
+		folderinv.mkdirs();
+		if(!new File(folderinv+"/"+p.getName()).exists()) {
+			return;
+		}
+		byte[] bytes = Files.toByteArray(new File(folderinv+"/"+p.getName()));
+		String full = new String(bytes);
+		String[] spl = full.split("-");
+		new File(folderinv+"/"+p.getName()).delete();
+		p.getInventory().setArmorContents(fromString(spl[0]).getContents());
+		p.getInventory().setContents(fromString(spl[1]).getContents());
+	}  
 }
