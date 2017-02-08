@@ -41,7 +41,6 @@ public class InventoryNBTSer {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		
 	}
 
 	public static void getInv(Player p, File folder) {
@@ -62,11 +61,10 @@ public class InventoryNBTSer {
 			p.playSound(p.getLocation(), Sound.EXPLODE, 1, 2);
 			return;
 		}
-
 		NBTTagCompound NBT = fromNBTTagCompound(folder+"/kits/"+name.toLowerCase()+".kit");
 		long time = NBT.getLong("time");
 		NBTTagList Inv  = NBT.getList("kit", 10);
-		
+
 		if(!b) {
 			if(new File(folder+"/players/"+name.toLowerCase()+"-"+p.getName()).exists()) {
 				NBTTagCompound temp = fromNBTTagCompound(folder+"/players/"+name.toLowerCase()+"-"+p.getName());
@@ -80,7 +78,7 @@ public class InventoryNBTSer {
 				}
 			}
 		}
-	
+
 		ItemStack[] st = fromInventory(Inv).getContents();
 		for(ItemStack s : st) {
 			if(s != null) {
@@ -141,7 +139,7 @@ public class InventoryNBTSer {
 			p.playSound(p.getLocation(), Sound.EXPLODE, 1, 0);
 		}
 	}	
-	
+
 	public static List<String> getLogs(File folder) {
 		List<String> l = new ArrayList<String>();
 		File Logs = new File(folder+"/kits"); 
@@ -154,11 +152,11 @@ public class InventoryNBTSer {
 		}
 		return l;
 	}
-	
+
 	private static NBTTagList toNBTTagList(ItemStack[] inventory) {
 		NBTTagList itemList = new NBTTagList();
-        for (int i = 0; i < inventory.length; i++) {
-            NBTTagCompound outputObject = new NBTTagCompound();
+		for (int i = 0; i < inventory.length; i++) {
+        	NBTTagCompound outputObject = new NBTTagCompound();
             boolean b = false;
             if(inventory[i] != null) {
             	b = inventory[i].getType() == Material.AIR;
@@ -168,13 +166,12 @@ public class InventoryNBTSer {
             }
             CraftItemStack craft = getCraftVersion(inventory[i]);
             if (craft != null)
-                CraftItemStack.asNMSCopy(craft).save(outputObject);
-
+            	CraftItemStack.asNMSCopy(craft).save(outputObject);
             itemList.add(outputObject);
         }
 		return itemList;
 	}
-	
+
 	public static NBTTagCompound fromNBTTagCompound(String p){
 		try {
 			return NBTCompressedStreamTools.a(new FileInputStream(p));
@@ -184,24 +181,24 @@ public class InventoryNBTSer {
 			return nul;
 		}
 	}
-	
+
 	private static Inventory fromInventory(NBTTagList itemList) {
 		Inventory inventory = new CraftInventoryCustom(null, itemList.size());
-        for (int i = 0; i < itemList.size(); i++) {
-            NBTTagCompound inputObject = itemList.get(i);
-            if (!inputObject.isEmpty()) {
-                inventory.setItem(i, CraftItemStack.asBukkitCopy(net.minecraft.server.v1_7_R4.ItemStack.createStack(inputObject)));
-            }
-        }
-        return inventory;
+		for (int i = 0; i < itemList.size(); i++) {
+			NBTTagCompound inputObject = itemList.get(i);
+			if (!inputObject.isEmpty()) {
+				inventory.setItem(i, CraftItemStack.asBukkitCopy(net.minecraft.server.v1_7_R4.ItemStack.createStack(inputObject)));
+			}
+		}
+		return inventory;
 	}
-	
-    private static CraftItemStack getCraftVersion(ItemStack stack) {
-        if (stack instanceof CraftItemStack)
-            return (CraftItemStack) stack;
-        else if (stack != null)
-            return CraftItemStack.asCraftCopy(stack);
-        else
-            return null;
-    }
+
+	private static CraftItemStack getCraftVersion(ItemStack stack) {
+		if (stack instanceof CraftItemStack)
+			return (CraftItemStack) stack;
+		else if (stack != null)
+			return CraftItemStack.asCraftCopy(stack);
+		else
+			return null;
+	}
 }
